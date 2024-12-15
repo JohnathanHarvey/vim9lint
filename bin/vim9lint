@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+# bin/vim9lint
+require_relative '../lib/linter'
+
+if ARGV.empty?
+  puts 'Usage: vim9lint path/to/file.vim'
+  exit 1
+end
+
+file_path = ARGV.first
+unless File.exist?(file_path)
+  puts "Error: File #{file_path} does not exist."
+  exit 1
+end
+
+results = Linter.run(file_path)
+
+if results.empty?
+  puts 'No issues found!'
+  exit 0
+else
+  results.each do |violation|
+    puts "[#{violation[:rule]}] #{violation[:message]} at line #{violation[:line]}"
+  end
+  exit 1
+end
